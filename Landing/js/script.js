@@ -106,5 +106,97 @@ window.addEventListener('DOMContentLoaded', function() { //то есть ког�
         overlay.style.display = 'none';
         descrBtn.classList.remove('more-splash');
         document.body.style.overflow = '';        
-    })
+    });
+
+    //Form
+    let message = {
+        loading : 'Загрузка...',
+        success: 'Спасибо. Скороsss мы с Вами свяжемся',
+        failure : 'Что-то пошло не так...'
+    };
+
+    let form = document.querySelector('.main-form');
+    let contactForm = document.querySelector('#form');
+    let input = document.getElementsByTagName('input');
+    let statusMessage = document.createElement('div');
+
+
+    
+    statusMessage.classList.add('status');    
+
+    form.addEventListener('submit', function(event) {
+        //отмена стандартного поведения браузера - при нажатии на button страница будет возвращаться в начало и обновляться
+        event.preventDefault();
+        form.appendChild(statusMessage);
+
+        //Создаем запрос для отправки на сервер
+        let request = new XMLHttpRequest();
+        request.open('POST', 'server.php');
+        request.setRequestHeader('Content-type', 'application/json; charset=utf-8');
+        
+        let formData = new FormData(form); // Этот объект FormData позволяет достать все данные из нужной нам формы
+
+        // Превращаем объект FormData в обычный читаемый объект
+        let obj = {};
+        formData.forEach(function(value, key) {
+            obj[key] = value;
+        });
+        
+        let json = JSON.stringify(obj);
+
+        request.send(json);
+
+        request.addEventListener('readystatechange', function() {
+            if(request.readyState < 4) {
+                statusMessage.innerHTML = message.loading;
+            } else if(request.readyState === 4 && request.status == 200) {
+                statusMessage.innerHTML = message.success;
+            } 
+            else {
+                statusMessage.innerHTML = message.failure;
+            }
+        });
+
+        for(let i = 0; i < input.length; i++) {
+            input[i].value = '';
+        }
+    });
+
+    contactForm.addEventListener('submit', function(event) {
+        //отмена стандартного поведения браузера - при нажатии на button страница будет возвращаться в начало и обновляться
+        event.preventDefault();
+        contactForm.appendChild(statusMessage);
+
+        //Создаем запрос для отправки на сервер
+        let request2 = new XMLHttpRequest();
+        request2.open('POST', 'server.php');
+        request2.setRequestHeader('Content-type', 'application/json; charset=utf-8');
+        
+        let formData2 = new FormData(contactForm); // Этот объект FormData позволяет достать все данные из нужной нам формы
+
+        // Превращаем объект FormData в обычный читаемый объект
+        let obj2 = {};
+        formData2.forEach(function(value, key) {
+            obj2[key] = value;
+        });
+        
+        let json2 = JSON.stringify(obj2);
+
+        request2.send(json2);
+
+        request2.addEventListener('readystatechange', function() {
+            if(request2.readyState < 4) {
+                statusMessage.innerHTML = message.loading;
+            } else if(request2.readyState === 4 && request2.status == 200) {
+                statusMessage.innerHTML = message.success;
+            } 
+            else {
+                statusMessage.innerHTML = message.failure;
+            }
+        });
+
+        for(let i = 0; i < input.length; i++) {
+            input[i].value = '';
+        }
+    });
 });
